@@ -10,10 +10,8 @@ finish-args:
   - --share=ipc
   - --share=network
   - --device=dri
-  - --socket=x11
   - --socket=fallback-x11
   - --socket=wayland
-  - --talk-name=org.gnome.SettingsDaemon
   - --filesystem=host
   - --env=PATH=/app/utils/bin:/app/sublime_merge/bin:/app/bin:/usr/bin
   - --env=PYTHONPATH=/app/utils/lib/python3.9/site-packages
@@ -24,7 +22,7 @@ add-extensions:
     add-ld-path: lib
 
   com.sublimetext.three.DevUtils:
-    version: '21.08'
+    version: '24.08'
     directory: utils
     subdirectories: false
     add-ld-path: lib
