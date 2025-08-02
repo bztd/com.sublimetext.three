@@ -24,8 +24,6 @@
     <category>Utility</category>
     <category>TextEditor</category>
   </categories>
-  <icon type="remote" height="128" width="128">https://raw.githubusercontent.com/flathub/com.sublimetext.three/master/com.sublimetext.three-128.png</icon>
-  <icon type="remote" height="64" width="64">https://raw.githubusercontent.com/flathub/com.sublimetext.three/master/com.sublimetext.three-64.png</icon>
   <releases>
     <release date="2025-02-01" version="4200" />
     <release date="2019-10-01" version="3.2.2" />
@@ -33,5 +31,4 @@
   <content_rating type="oars-1.1">
     <content_attribute id="social-info">intense</content_attribute>
   </content_rating>
-  <update_contact>philip_AT_endlessm.com</update_contact>
 </component>
