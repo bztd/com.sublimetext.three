@@ -1,9 +1,12 @@
 app-id: com.sublimetext.three
-command: subl
+command: sublime_text
 
 runtime: org.freedesktop.Sdk
 runtime-version: '24.08'
 sdk: org.freedesktop.Sdk
+
+rename-desktop-file: sublime_text.desktop
+rename-icon: sublime-text
 
 separate-locales: false
 finish-args:
@@ -30,27 +33,26 @@ add-extensions:
     autodelete: true
 
 modules:
+  - name: extensions
+    buildsystem: simple
+    build-commands:
+      - install -d /app/utils
+      - install -d /app/sublime_merge
+      
   - name: sublime
     buildsystem: simple
+    build-commands:
+      - mkdir -p /app/sublime
+      - mkdir -p /app/bin
+      - cp -r ./* /app/sublime/
+      - ln -s /app/sublime/sublime_text /app/bin/sublime_text
+      - install apply_extra /app/bin
+      - install subl /app/bin/subl
+      - install -Dm644 -t /app/share/applications/ ./sublime_text.desktop
+      - install -Dm644 -t /app/share/appdata/ ./com.sublimetext.three.appdata.xml
+      - install -Dm644 -t /app/share/icons/hicolor/256x256/apps ./Icon/256x256/sublime-text.png
+  
     sources:
-      - type: script
-        dest-filename: apply_extra
-        commands:
-          - FLATPAK_ID=com.sublimetext.three
-          # Extract upstream package
-          - mkdir -p deb-package export/share
-          - ar p sublime.deb data.tar.xz | tar -xJf - -C deb-package
-          # Install desktop entry and icons
-          - mv deb-package/usr/share/{applications,icons} export/share/
-          - rename sublime_text ${FLATPAK_ID} export/share/applications/*.desktop
-          - rename sublime-text ${FLATPAK_ID} export/share/icons/hicolor/*/apps/*
-          - desktop-file-edit --set-key=Exec --set-value='subl %F' --set-key=Icon
-            --set-value=${FLATPAK_ID} export/share/applications/${FLATPAK_ID}.desktop
-          # Install the app
-          - mv deb-package/opt/sublime_text ./
-          - ln -sr /app/sublime_merge/extra/sublime_merge ./sublime_merge
-          # Cleanup
-          - rm -rf deb-package sublime.deb
       - type: script
         dest-filename: subl
         commands:
@@ -65,15 +67,15 @@ modules:
           - export LC_NUMERIC=C
           - exec /app/extra/sublime_text/sublime_text --fwdargv0 "$0" "$@"
       - type: archive
-        only-arches:
-          - x86_64
         url: https://download.sublimetext.com/sublime_text_build_4199_x64.tar.xz
         sha256: 36b870bfea31fd25b6d5cf3066db97f66cc743ea3d821b08e74754da40ef097d
-      - type: archive
         only-arches:
-          - aarch64
+          - x86_64
+      - type: archive
         url: https://download.sublimetext.com/sublime_text_build_4199_arm64.tar.xz
         sha256: def0978f9ddfd9096dfc06f784d36783e6380a1f390e9d06f2cad3541b5deb35 
+        only-arches:
+          - aarch64
       - type: extra-data
         filename: Package Control.sublime-package
         url: http://packagecontrol.io/Package%20Control.sublime-package
@@ -85,15 +87,3 @@ modules:
         path: com.sublimetext.three.appdata.xml
       - type: file
         path: com.sublimetext.three-128.png
-    build-commands:
-      - mkdir -p /app/bin
-      - mkdir -p /app/lib
-      - install apply_extra /app/bin
-      - install subl /app/bin/subl
-      - install -Dm644 com.sublimetext.three.desktop /app/share/applications/com.sublimetext.three.desktop
-      - install -Dm644 com.sublimetext.three.appdata.xml /app/share/appdata/com.sublimetext.three.appdata.xml
-      - install -Dm644 com.sublimetext.three-128.png /app/share/icons/hicolor/128x128/apps/com.sublimetext.three.png
-    post-install:
-      # This creates the mount point for the extensions.
-      - mkdir -p /app/utils
-      - mkdir -p /app/sublime_merge
